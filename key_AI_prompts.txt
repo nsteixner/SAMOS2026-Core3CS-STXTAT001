@@ -1,0 +1,82 @@
+# key AI prompts
+## Chl-a Mapping Project
+
+Key AI prompts used during the chlorophyll-A mapping project: 
+
+exploring FTP download option:
+
+'''using python, download netcdf files of global ocean colour from ESA data portal.
+credentials: 
+FTP server: oceancolour.org
+Username: oc-cci-data
+Password: ELaiWai8ae
+
+website:
+https://climate.esa.int/en/projects/ocean-colour/data/#citing-ocean-colour-cci-information-and-data-products'''
+
+
+check for correct subsetting and area extent: 
+
+'''lat_min, lat_max = 40.59893, 43.40025
+lon_min, lon_max = -10.40185, -8.19799
+
+tool to measure distance of this bounding box
+i.e. length E-W and length N-S'''
+
+
+plotting yearly mean data: 
+
+'''plot yearly_mean as a map with logarithmic scale for chla'''
+
+
+for bathymetry originally wrong grid downloaded: 
+
+'''I have downloaded a grid file from the gmrt Map Tool: 
+https://www.gmrt.org/GMRTMapTool/
+which allows for download of GMT v3 Compatible NetCDF files. 
+using xarray, I import the grid as follows: 
+bathy = xr.open_dataset("gmrt_bathymetry_grid.grd", engine="netcdf4")
+
+it appears that the grid is incorrectly imported, as x range, y range, and z range are of dim 2, and the variable z contains a large, 14 MB grid of size 1723868.'''
+
+
+reconstruction of grid: 
+'''reconstruct grid to proper xarray with dim(x, y, z range)
+coord grid
+z values as bathymetry_data'''
+
+
+adapting cartopy plots to xarray faceting: 
+
+'''fig, ax = plt.subplots(3, 4, subplot_kw={'projection': ccrs.PlateCarree()})
+oc_chla_subset.plot(ax=ax, col='time', col_wrap=3, cmap='turbo', vmin=0.1, vmax=25., transform=ccrs.PlateCarree(),
+cbar_kwargs={'orientation': 'vertical', 'shrink': 0.5})
+ax.add_feature(cfeature.COASTLINE, linewidth=0.8)
+ax.add_feature(cfeature.LAND, facecolor='lightgray', zorder=1)
+plt.show()
+
+
+skipna for monthly mean calculation: 
+
+'''calculate monthly mean over whole dataset
+dataset has nas, drop na first
+mean_sc = oc_chla_subset.groupby('time.month').mean()'''
+
+
+construct monthly mean plot:
+
+'''#fig, ax = plt.subplots()
+plt.plot(time_index, [mean_sc, point_sc])
+
+plot mean_sc and point_sc on same plot as lines, marker = "o", lines orange and blue, set time index as date only (not datetime)
+logarithmic y-scale'''
+
+reorder time dimension: 
+
+'''an  imported netcf file is not in correct temporal order
+output of coords["time"] array: 
+array(['1998-01-01T00:00:00.000000000', '1998-02-01T00:00:00.000000000',        '1998-03-01T00:00:00.000000000', '1998-04-01T00:00:00.000000000',        '1998-05-01T00:00:00.000000000', '1998-06-01T00:00:00.000000000',        '1998-07-01T00:00:00.000000000', '1998-08-01T00:00:00.000000000',        '1997-09-04T00:00:00.000000000', '1997-10-01T00:00:00.000000000',        '1997-11-01T00:00:00.000000000', '1997-12-01T00:00:00.000000000'],       dtype='datetime64[ns]')
+
+assign sorted array to new variable'''
+
+
